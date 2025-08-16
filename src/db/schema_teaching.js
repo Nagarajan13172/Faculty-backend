@@ -35,4 +35,6 @@ export const employeeMaster = mysqlTable('employee_master', {
   stage4: int('stage4'),
   stage5: int('stage5'),
   place: tinyint('place'),
+  is_superadmin: tinyint('is_superadmin').default(0), // 0 = false, 1 = true
+
 });

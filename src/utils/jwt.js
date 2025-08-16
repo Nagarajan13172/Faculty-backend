@@ -37,5 +37,6 @@ export function authMiddleware(req, res, next) {
   if (!decoded) return res.status(401).json({ error: "Invalid or expired token" });
 
   req.user = decoded;
+  console.log(req.user)
   return next();
 }

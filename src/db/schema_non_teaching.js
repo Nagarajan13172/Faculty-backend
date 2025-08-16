@@ -39,4 +39,5 @@ export const employeeMasterNonTeaching = mysqlTable('employee_master_non_teachin
   EMPTYPE: varchar('EMPTYPE', { length: 5, nullable: true }),
   dept: varchar('dept', { length: 60, nullable: true }),
   promotwo: varchar('promotwo', { length: 40, nullable: true }),
+  is_superadmin: tinyint('is_superadmin').default(0), // 0 = false, 1 = true
 });

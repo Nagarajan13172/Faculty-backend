@@ -6,12 +6,24 @@ import swaggerJSDoc from "swagger-jsdoc";
 import { db } from "./src/db/connection.js";
 import { employeeMaster } from "./src/db/schema_teaching.js";
 import { registerLoginRoute } from "./src/pages/login.js";
-import { authMiddleware } from "./src/utils/jwt.js"; 
+import * as leaveController from "./src/pages/leave.js";
+import { authMiddleware } from "./src/utils/jwt.js";
+import cors from "cors"; // <-- add this
+
 
 dotenv.config();
 
 const app = express();
+
+// CORS: allow all origins
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 app.use(express.json());
+
 
 // Swagger setup (add Bearer scheme)
 const swaggerDefinition = {
@@ -32,8 +44,15 @@ const options = { swaggerDefinition, apis: ["./src/pages/login.js", "./index.js"
 const swaggerSpec = swaggerJSDoc(options);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+
 // Register login API
 registerLoginRoute(app);
+
+// Leave portal routes
+app.post("/leave/apply", authMiddleware, leaveController.applyLeave);
+app.get("/leave/pending", authMiddleware, leaveController.getPendingLeaves); // superadmin only
+app.post("/leave/approve", authMiddleware, leaveController.approveLeave);    // superadmin only
+app.get("/leave/my", authMiddleware, leaveController.getMyLeaves);           // staff only
 
 // Public health check (leave public if you want)
 app.get("/health", async (_req, res) => {
